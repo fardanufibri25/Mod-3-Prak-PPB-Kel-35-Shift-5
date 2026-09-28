@@ -15,6 +15,10 @@ class CountryApp extends StatelessWidget {
       title: 'ApiCountries Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
+      scrollBehavior: const MaterialScrollBehavior().copyWith(
+        overscroll: false,
+        physics: const ClampingScrollPhysics(),
+      ),
       home: const NavigationPage(),
     );
   }

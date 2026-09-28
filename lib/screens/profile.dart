@@ -11,7 +11,10 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final List<Map<String, String>> teamMembers = [
-    {'Nama': 'Fardanu Fibri Alfarizi', 'NIM': '21120124110105'},
+    {'nama': 'Fardanu Fibri Alfarizi', 'nim': '21120124110105'},
+    {'nama': 'Najma Quratuaini', 'nim': '21120124120009'},
+    {'nama': 'Chalin Rizky Malinda', 'nim': '21120124120029'},
+    {'nama': 'Muhammad Rafli Buchori', 'nim': '21120124130095'},
   ];
 
   @override
@@ -20,75 +23,139 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         title: const Text('Profile'),
         backgroundColor: const Color.fromARGB(255, 13, 105, 225),
+        foregroundColor: Colors.white,
         actions: [
           IconButton(icon: const Icon(Icons.home), onPressed: widget.onHomeTap),
         ],
       ),
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          Positioned.fill(
-            child: FractionallySizedBox(
-              alignment: Alignment.topCenter,
-              heightFactor: 0.5,
-              child: Container(
-                decoration: BoxDecoration(
-                  image: const DecorationImage(
-                    fit: BoxFit.cover,
-                    alignment: Alignment.topCenter,
-                    image: NetworkImage(
-                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRa-qwWdrGJyBejM_K0cn0qeR6DYGHAsMCVUX6GsImDSiLrTguAUC5vVsM&s=10',
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Header with gradient
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 13, 105, 225),
+                    Color.fromARGB(255, 56, 152, 255),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
+              ),
+              child: const Column(
+                children: [
+                  Icon(Icons.group, size: 48, color: Colors.white),
+                  SizedBox(height: 8),
+                  Text(
+                    'Kelompok 35 - Shift 5',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
-                  color: const Color.fromARGB(
-                    255,
-                    255,
-                    252,
-                    252,
-                  ).withValues(alpha: 128),
+                  SizedBox(height: 4),
+                  Text(
+                    'Praktikum PPB - Modul 3',
+                    style: TextStyle(fontSize: 14, color: Colors.white70),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Team group photo
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(
+                  'assets/images/team.jpg',
+                  width: double.infinity,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 100.0,
-                  height: 100.0,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(
-                        'https://hips.hearstapps.com/hmg-prod/images/f6ggka-67a4b1aa28d9f.jpg?crop=1.00xw:1.00xh;0,0&resize=1800:*',
-                      ),
+            const SizedBox(height: 16),
+            // Team members list
+            ...teamMembers.map(
+              (member) => Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 6,
+                ),
+                child: Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        const CircleAvatar(
+                          radius: 22,
+                          backgroundColor: Color.fromARGB(255, 13, 105, 225),
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                member['nama']!,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(
+                                    255,
+                                    13,
+                                    105,
+                                    225,
+                                  ).withAlpha(25),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  member['nim']!,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Color.fromARGB(255, 13, 105, 225),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 16.0),
-                for (var member in teamMembers)
-                  Column(
-                    children: [
-                      Text(
-                        member['Nama'] ?? 'No Name',
-                        style: const TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8.0),
-                      Text(
-                        member['NIM'] ?? 'No NIM',
-                        style: const TextStyle(fontSize: 16.0),
-                      ),
-                    ],
-                  ),
-              ],
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+          ],
+        ),
       ),
     );
   }

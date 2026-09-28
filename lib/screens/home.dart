@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 import '../models/country.dart';
 import '../services/favorites_manager.dart';
+import '../services/history_manager.dart';
 import 'detail.dart';
 
 export '../models/country.dart';
@@ -20,6 +21,17 @@ class _HomePageState extends State<HomePage> {
   late Future<List<Country>> countries;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  String _selectedRegion = 'Semua';
+
+  final List<String> _regions = [
+    'Semua',
+    'Africa',
+    'Americas',
+    'Asia',
+    'Europe',
+    'Oceania',
+    'Antarctic',
+  ];
 
   @override
   void initState() {
@@ -51,6 +63,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(title: const Text('Countries')),
       body: Column(
         children: [
+          // Search bar
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 10, 12, 6),
             child: TextField(
@@ -88,6 +101,43 @@ class _HomePageState extends State<HomePage> {
               },
             ),
           ),
+          // Region filter chips
+          SizedBox(
+            height: 44,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              itemCount: _regions.length,
+              itemBuilder: (context, index) {
+                final region = _regions[index];
+                final isSelected = region == _selectedRegion;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: FilterChip(
+                    label: Text(
+                      region,
+                      style: TextStyle(
+                        color: isSelected ? Colors.white : Colors.black87,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                    selected: isSelected,
+                    selectedColor: Colors.blue,
+                    backgroundColor: Colors.grey.shade200,
+                    checkmarkColor: Colors.white,
+                    onSelected: (_) {
+                      setState(() {
+                        _selectedRegion = region;
+                      });
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 4),
+          // Country list
           Expanded(
             child: FutureBuilder<List<Country>>(
               future: countries,
@@ -100,7 +150,16 @@ class _HomePageState extends State<HomePage> {
                   return const Center(child: Text('No countries found'));
                 }
 
-                final allCountries = snapshot.data!;
+                var allCountries = snapshot.data!;
+
+                // Filter by region
+                if (_selectedRegion != 'Semua') {
+                  allCountries = allCountries
+                      .where((c) => c.region == _selectedRegion)
+                      .toList();
+                }
+
+                // Filter by search query
                 final filtered = _searchQuery.isEmpty
                     ? allCountries
                     : allCountries.where((c) {
@@ -125,7 +184,9 @@ class _HomePageState extends State<HomePage> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'Tidak ada hasil untuk "$_searchQuery"',
+                          _searchQuery.isNotEmpty
+                              ? 'Tidak ada hasil untuk "$_searchQuery"'
+                              : 'Tidak ada negara di region "$_selectedRegion"',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -133,7 +194,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Coba kata kunci lain atau periksa ejaan',
+                          'Coba kata kunci lain atau ubah filter benua',
                           style: TextStyle(color: Colors.grey.shade600),
                         ),
                       ],
@@ -188,6 +249,7 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                         onTap: () {
+                          HistoryManager().addToHistory(country);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -207,4 +269,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
